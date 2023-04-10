@@ -15,7 +15,6 @@ recognition.interimResults = true;
 
 const ChatForm = () => {
   // const messageInputRef = useRef(null);
-  // const audioRef = useRef(null);
   const imgRef = useRef(null);
   const dispatch = useDispatch();
   const { loading, messages } = useSelector((state) => state.chat);
@@ -38,7 +37,6 @@ const ChatForm = () => {
     loadVoices();
   }, []);
 
-  console.log("render", playState);
   const [transcript, setTranscript] = useState("");
 
   useEffect(() => {
@@ -56,7 +54,6 @@ const ChatForm = () => {
   }, [messages]);
 
   useEffect(() => {
-    console.log("result --- ", transcript);
     setTimeout(() => {
       recognition.stop();
     }, 0);
@@ -76,7 +73,6 @@ const ChatForm = () => {
   }, [loading]);
 
   recognition.onend = (event) => {
-    console.log("Recog Ended", startState, playState);
     if (startState && !playState) {
       setTimeout(() => {
         recognition.start();
@@ -84,7 +80,7 @@ const ChatForm = () => {
     }
   };
   recognition.onstart = (event) => {
-    console.log("Recog Stated");
+    
     setTranscript("");
   };
 
@@ -100,11 +96,10 @@ const ChatForm = () => {
         interimTranscript += transcript;
       }
     }
-
-    console.log("recog1 ----", playState, finalTranscript);
+    
 
     if (!finalTranscript) return;
-    console.log("recog2 ----", finalTranscript);
+    
     setTranscript(finalTranscript);
   };
 
@@ -113,11 +108,11 @@ const ChatForm = () => {
     setStartState(true);
 
     recognition.start();
-    console.log("Start--", playState);
+    
   };
 
   const stopChat = () => {
-    console.log("Stop");
+    
 
     setPlayState(true);
     setStartState(false);
@@ -127,7 +122,7 @@ const ChatForm = () => {
   };
 
   const processChat = async (text) => {
-    console.log("processChat--", playState, text);
+    
     if (!text) {
       return;
     }
@@ -138,34 +133,17 @@ const ChatForm = () => {
     // chatForm.resetFields();
   };
 
-  // const onSubmit = async (event) => {
-  //   console.log('OnSubmit---')
-  //   await processChat(event.target.value)
-  // };
-
-  // const onEndedProcess = async () => {
-  //   console.log("play ended");
-  //   setPlayState(false);
-  //   await recognition.start();
-  // };
+  
 
   const createAudio = async (text, options) => {
-    // const audio = new Audio(`https://text-to-speech-demo.ng.bluemix.net/api/v1/synthesize?text=${encodeURIComponent(text)}&voice=ja-JP_EmiV3Voice`);
-    // audio.play();
 
     imgRef.current.src = "/avatar1.gif";
-    console.log("setss", speed);
     const utterance = new SpeechSynthesisUtterance(text);
-    // utterance.voice = voice;
-
-    // utterance.voice = speechSynthesis.getVoices().find(voice => voice.lang === 'ja-JP');
     utterance.voice = japaneseVoice;
     utterance.rate = speed; // controls the speed, 1 is normal speed
     utterance.pitch = 1; // controls the pitch, 1 is normal pitch
-    console.log("---------------------", utterance.voice);
 
     utterance.addEventListener("end", async () => {
-      console.log("Audio finished playing.");
 
       setPlayState(false);
       await recognition.start();
@@ -173,11 +151,7 @@ const ChatForm = () => {
       imgRef.current.src = "/avatar2.gif";
     });
 
-    console.log("---------------------", 111);
-
     speechSynthesis.speak(utterance);
-
-    // return;
 
     // console.log("---createAudio");
     // const data = await createVoice(text, options);
