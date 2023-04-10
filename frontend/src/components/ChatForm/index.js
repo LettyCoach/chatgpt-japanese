@@ -231,15 +231,15 @@ const ChatForm = () => {
             options={[
               {
                 value: "0.8",
-                label: "Beginner",
+                label: "初心者",
               },
               {
                 value: "1",
-                label: "Normal",
+                label: "普通",
               },
               {
                 value: "1.2",
-                label: "Expert",
+                label: "エキスパート",
               },
             ]}
           />

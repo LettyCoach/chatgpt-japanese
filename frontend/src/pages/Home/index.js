@@ -15,9 +15,9 @@ const CGTLayout = () => (
           <MenuOutlined style={styles.iconStyle} />
           <div style={styles.titleStyle}>
             <Title style={styles.titleStyle} level={4}>
-              Real Assist AI
+              リアルアシストAI
             </Title>
-            <Text type="secondary">This is private message, between you and assistant</Text>
+            <Text type="secondary">初心者から始めて日本語を学べるオンラインスクール</Text>
           </div>
         </Space>
       </Header>

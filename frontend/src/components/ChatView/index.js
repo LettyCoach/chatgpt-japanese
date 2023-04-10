@@ -45,7 +45,7 @@ const ChatView = () => {
     <div style={styles.chatViewStyle}>
       {contextHolder}
       <div style={styles.topMsgWrapperStyle}>
-        <span style={styles.topMsgStyle}>This chat is end to end encrypted</span>
+        <span style={styles.topMsgStyle}>Welcome</span>
       </div>
       {messages.map((msg, idx) => (
         <div
