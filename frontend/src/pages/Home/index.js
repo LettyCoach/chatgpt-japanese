@@ -1,4 +1,4 @@
-import { Layout, Space, Typography } from "antd";
+import { Col, Layout, Row, Space, Typography } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import ChatForm from "../../components/ChatForm";
 import ChatHistory from "../../components/ChatHistory";
@@ -22,15 +22,19 @@ const CGTLayout = () => (
         </Space>
       </Header>
       <Content style={styles.contentStyle}>
-        <ChatView />
+        <Row>
+          <Col span={8}>
+            <ChatForm />
+          </Col>
+          <Col span={16}>
+            <ChatView />
+          </Col>
+        </Row>
       </Content>
-      <Footer style={styles.footerStyle}>
-        <ChatForm />
-      </Footer>
     </Layout>
-    <Sider width={300} style={styles.siderStyle}>
+    {/* <Sider width={300} style={styles.siderStyle}>
       <ChatHistory />
-    </Sider>
+    </Sider> */}
   </Layout>
 );
 export default CGTLayout;
