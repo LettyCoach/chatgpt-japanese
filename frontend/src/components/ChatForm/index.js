@@ -11,7 +11,7 @@ const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecogni
 const recognition = new SpeechRecognition(); // prefix 必要 SpeechRecognition
 recognition.lang = "ja-JP";
 recognition.continuous = true;
-recognition.interimResults = true;
+recognition.interimResults = false;
 
 const ChatForm = () => {
   const [chatForm] = Form.useForm();
@@ -70,7 +70,7 @@ const ChatForm = () => {
   }, [loading]);
 
   recognition.onend = (event) => {
-    console.log("startState, playState", startState, playState);
+    //console.log("startState, playState", startState, playState);
     if (startState && !playState) {
       setTimeout(() => {
         recognition.start();
@@ -174,7 +174,7 @@ const ChatForm = () => {
   // };
 
   const handleSpeedChange = (value) => {
-    console.log(value);
+    //console.log(value);
     setSpeed(value);
   };
 
