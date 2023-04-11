@@ -13,15 +13,29 @@ recognition.lang = "ja-JP";
 recognition.continuous = true;
 recognition.interimResults = false;
 
+const systemMessage = [
+  // {
+  //   role: "system",
+  //   content:
+  //     "Explain things like you're talking to a software professional with 2 years of experience.",
+  // },
+  {
+    role: "assistant",
+    content: "あなたは日本語会話友達です、８歳レベルの単語を使って80字以内で会話を続けて下さい。",
+  },
+];
+
 const ChatForm = () => {
   const [chatForm] = Form.useForm();
   const messageInputRef = useRef(null);
+  const audioRef = useRef(null);
   const imgRef = useRef(null);
   const dispatch = useDispatch();
   const { loading, messages } = useSelector((state) => state.chat);
   let [playState, setPlayState] = useState(true);
   let [startState, setStartState] = useState(false);
   const [speed, setSpeed] = useState("1");
+  const [user, setUser] = useState("A");
   const [japaneseVoice, setJapaneseVoice] = useState(null);
 
   useEffect(() => {
@@ -124,7 +138,20 @@ const ChatForm = () => {
     }, 0);
 
     setPlayState(true);
-    const response = fetchMessage(text);
+
+    let messageList = messages.map((e) => {
+      let role = "";
+      if (e.sender === "a") {
+        role = "assistant";
+      } else {
+        role = "user";
+      }
+      return { role: role, content: e.text };
+    });
+
+    messageList = [...systemMessage, ...messageList, { role: "user", content: text }];
+
+    const response = fetchMessage(messageList);
 
     dispatch(response);
     chatForm.resetFields();
@@ -132,21 +159,22 @@ const ChatForm = () => {
 
   const createAudio = async (text, options) => {
     imgRef.current.src = "/avatar1.gif";
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = japaneseVoice;
-    utterance.rate = speed; // controls the speed, 1 is normal speed
-    utterance.pitch = 1; // controls the pitch, 1 is normal pitch
+    if (user === "A") {
+      audioRef.current.src = `https://www.yukumo.net/api/v2/aqtk1/koe.mp3?type=f1&amp;effect=none&amp;boyomi=true&amp;speed=${speed * 100}&amp;volume=100&amp;kanji='${text}'`;
+      audioRef.current.play();
+    } else {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = japaneseVoice;
+      utterance.rate = speed; // controls the speed, 1 is normal speed
+      utterance.pitch = 1; // controls the pitch, 1 is normal pitch
+      utterance.addEventListener("end", async () => {
+        setPlayState(false);
+        await recognition.start();
+        imgRef.current.src = "/avatar2.gif";
+      });
+      speechSynthesis.speak(utterance);
+    }
 
-    utterance.addEventListener("end", async () => {
-      setPlayState(false);
-      await recognition.start();
-
-      imgRef.current.src = "/avatar2.gif";
-    });
-
-    speechSynthesis.speak(utterance);
-
-    // console.log("---createAudio");
     // const data = await createVoice(text, options);
     // audioRef.current.src = URL.createObjectURL(data);
     // audioRef.current.play();
@@ -173,9 +201,21 @@ const ChatForm = () => {
   //   return response.data;
   // };
 
+  const onEndedProcess = async () => {
+    setPlayState(false);
+    await recognition.start();
+
+    imgRef.current.src = "/avatar2.gif";
+  };
+
   const handleSpeedChange = (value) => {
     //console.log(value);
     setSpeed(value);
+  };
+
+  const handleUserChange = (value) => {
+    //console.log(value);
+    setUser(value);
   };
 
   const onSubmit = async (event) => {
@@ -190,6 +230,7 @@ const ChatForm = () => {
 
   return (
     <>
+      <audio ref={audioRef} onEnded={onEndedProcess} />
       <Row
         style={{ display: "flex", padding: "12px", alignItems: "center", justifyContent: "center" }}
       >
@@ -202,10 +243,10 @@ const ChatForm = () => {
       </Row>
       <Row style={{ padding: 8 }}>
         <Col span={2}></Col>
-        <Col span={12}>
+        <Col span={7}>
           <Select
             defaultValue={speed}
-            style={{ width: 120 }}
+            style={{ width: "90%" }}
             onChange={handleSpeedChange}
             options={[
               {
@@ -223,7 +264,24 @@ const ChatForm = () => {
             ]}
           />
         </Col>
-        <Col span={4}>
+        <Col span={7}>
+          <Select
+            defaultValue={user}
+            onChange={handleUserChange}
+            style={{ width: "90%" }}
+            options={[
+              {
+                value: "A",
+                label: "AI-A",
+              },
+              {
+                value: "B",
+                label: "AI-B",
+              },
+            ]}
+          />
+        </Col>
+        <Col span={3}>
           <Button
             type="primary"
             size="large"
@@ -234,7 +292,7 @@ const ChatForm = () => {
             Start
           </Button>
         </Col>
-        <Col span={4}>
+        <Col span={3}>
           <Button
             type="primary"
             size="large"

@@ -42,7 +42,7 @@ export const chatSlice = createSlice({
           ...state.messages,
           {
             id: state.messages.length,
-            text: action.payload,
+            text: action.payload[action.payload.length - 1].content,
             type: "q", // q: question, a: answer
             // time: new Date(),
             channelId: 0,

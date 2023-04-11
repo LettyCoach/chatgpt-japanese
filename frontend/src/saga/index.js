@@ -24,7 +24,8 @@ export let callAPI = async ({ url, method, data }) => {
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: data.message }],
+    // messages: [{ role: "user", content: data.message }],
+    messages: data.message,
     max_tokens: 128,
   });
 

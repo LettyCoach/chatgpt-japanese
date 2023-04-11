@@ -33,7 +33,7 @@ const CGTLayout = () => (
           <Col xs={24} sm={10} md={10} lg={8} xl={8} xxl={6}>
             <ChatForm />
           </Col>
-          <Col xs={24} sm={14} md={14} lg={16} xl={16} xxl={15}>
+          <Col xs={24} sm={14} md={14} lg={16} xl={16} xxl={15} style={{ overflowY: 'scroll', height : ' calc(100vh - 64px) '}}>
             <ChatView />
           </Col>
         </Row>
