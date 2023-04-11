@@ -14,7 +14,8 @@ recognition.continuous = true;
 recognition.interimResults = true;
 
 const ChatForm = () => {
-  // const messageInputRef = useRef(null);
+  const [chatForm] = Form.useForm();
+  const messageInputRef = useRef(null);
   const imgRef = useRef(null);
   const dispatch = useDispatch();
   const { loading, messages } = useSelector((state) => state.chat);
@@ -55,10 +56,6 @@ const ChatForm = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      recognition.stop();
-    }, 0);
-
-    setTimeout(() => {
       processChat(transcript);
     }, 0);
   }, [transcript]);
@@ -73,6 +70,7 @@ const ChatForm = () => {
   }, [loading]);
 
   recognition.onend = (event) => {
+    console.log("startState, playState", startState, playState);
     if (startState && !playState) {
       setTimeout(() => {
         recognition.start();
@@ -80,7 +78,6 @@ const ChatForm = () => {
     }
   };
   recognition.onstart = (event) => {
-    
     setTranscript("");
   };
 
@@ -96,10 +93,9 @@ const ChatForm = () => {
         interimTranscript += transcript;
       }
     }
-    
 
     if (!finalTranscript) return;
-    
+
     setTranscript(finalTranscript);
   };
 
@@ -108,12 +104,9 @@ const ChatForm = () => {
     setStartState(true);
 
     recognition.start();
-    
   };
 
   const stopChat = () => {
-    
-
     setPlayState(true);
     setStartState(false);
     recognition.stop();
@@ -122,21 +115,22 @@ const ChatForm = () => {
   };
 
   const processChat = async (text) => {
-    
     if (!text) {
       return;
     }
+
+    setTimeout(() => {
+      recognition.stop();
+    }, 0);
+
     setPlayState(true);
     const response = fetchMessage(text);
 
     dispatch(response);
-    // chatForm.resetFields();
+    chatForm.resetFields();
   };
 
-  
-
   const createAudio = async (text, options) => {
-
     imgRef.current.src = "/avatar1.gif";
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.voice = japaneseVoice;
@@ -144,7 +138,6 @@ const ChatForm = () => {
     utterance.pitch = 1; // controls the pitch, 1 is normal pitch
 
     utterance.addEventListener("end", async () => {
-
       setPlayState(false);
       await recognition.start();
 
@@ -185,19 +178,31 @@ const ChatForm = () => {
     setSpeed(value);
   };
 
+  const onSubmit = async (event) => {
+    if (!event.target.value) {
+      return;
+    }
+
+    setTimeout(() => {
+      processChat(event.target.value);
+    }, 0);
+  };
+
   return (
     <>
-      <Row style={{ height: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Row
+        style={{ display: "flex", padding: "12px", alignItems: "center", justifyContent: "center" }}
+      >
         <img
-          // width={'100%'}
+          width={"90%"}
           // height={'90%'}
           ref={imgRef}
           src="/avatar2.gif"
         />
       </Row>
-      <Row>
+      <Row style={{ padding: 8 }}>
         <Col span={2}></Col>
-        <Col span={8}>
+        <Col span={12}>
           <Select
             defaultValue={speed}
             style={{ width: 120 }}
@@ -240,10 +245,28 @@ const ChatForm = () => {
             Stop
           </Button>
         </Col>
-        <Col span={4}>
-          <Button type="primary" size="large" shape="circle" disabled={playState}>
-            <AudioOutlined />
-          </Button>
+        <Col span={2}></Col>
+      </Row>
+      <Row style={{ padding: 8 }}>
+        <Col span={2}></Col>
+        <Col span={20}>
+          <Form layout="inline" form={chatForm} name="message-form" style={styles.formStyle}>
+            <Form.Item style={styles.inputStyle} name="message">
+              <Input
+                size="large"
+                suffix={<PaperClipOutlined />}
+                placeholder="Message"
+                disabled={playState}
+                onPressEnter={onSubmit}
+                ref={messageInputRef}
+              />
+            </Form.Item>
+            <Form.Item style={styles.btnStyle} name="sendMsg">
+              <Button type="primary" size="large" shape="circle" disabled={playState}>
+                <AudioOutlined />
+              </Button>
+            </Form.Item>
+          </Form>
         </Col>
         <Col span={2}></Col>
       </Row>

@@ -14,19 +14,26 @@ const CGTLayout = () => (
         <Space size={20} style={styles.headerContentStyle}>
           <MenuOutlined style={styles.iconStyle} />
           <div style={styles.titleStyle}>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {/* 初心者から始めて日本語を学べるオンラインスクール */}
+              <br />
+            </Text>
             <Title style={styles.titleStyle} level={4}>
-              リアルアシストAI
+              日本語カフェAI会話システム
             </Title>
-            <Text type="secondary">初心者から始めて日本語を学べるオンラインスクール</Text>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {/* 初心者から始めて日本語を学べるオンラインスクール */}
+              <br />
+            </Text>
           </div>
         </Space>
       </Header>
       <Content style={styles.contentStyle}>
-        <Row>
-          <Col span={8}>
+        <Row style={{ flexFlow: "wrap-reverse" }}>
+          <Col xs={24} sm={10} md={10} lg={8} xl={8} xxl={6}>
             <ChatForm />
           </Col>
-          <Col span={16}>
+          <Col xs={24} sm={14} md={14} lg={16} xl={16} xxl={15}>
             <ChatView />
           </Col>
         </Row>
