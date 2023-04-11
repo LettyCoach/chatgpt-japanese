@@ -84,7 +84,7 @@ const ChatForm = () => {
   }, [loading]);
 
   recognition.onend = (event) => {
-    //console.log("startState, playState", startState, playState);
+    console.log("startState, playState", startState, playState);
     if (startState && !playState) {
       setTimeout(() => {
         recognition.start();
@@ -116,14 +116,20 @@ const ChatForm = () => {
   const startChat = async () => {
     setPlayState(false);
     setStartState(true);
-
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {}
   };
 
   const stopChat = () => {
     setPlayState(true);
     setStartState(false);
-    recognition.stop();
+    try {
+      recognition.stop();
+    } catch (error) {}
+    try {
+      audioRef.current.stop();
+    } catch (error) {}
 
     imgRef.current.src = "/avatar2.gif";
   };
@@ -160,7 +166,9 @@ const ChatForm = () => {
   const createAudio = async (text, options) => {
     imgRef.current.src = "/avatar1.gif";
     if (user === "A") {
-      audioRef.current.src = `https://www.yukumo.net/api/v2/aqtk1/koe.mp3?type=f1&amp;effect=none&amp;boyomi=true&amp;speed=${speed * 100}&amp;volume=100&amp;kanji='${text}'`;
+      audioRef.current.src = `https://www.yukumo.net/api/v2/aqtk1/koe.mp3?type=f1&amp;effect=none&amp;boyomi=true&amp;speed=${
+        speed * 100
+      }&amp;volume=100&amp;kanji='${text}'`;
       audioRef.current.play();
     } else {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -168,6 +176,7 @@ const ChatForm = () => {
       utterance.rate = speed; // controls the speed, 1 is normal speed
       utterance.pitch = 1; // controls the pitch, 1 is normal pitch
       utterance.addEventListener("end", async () => {
+        console.log("[[[[[[[[[[[[[[[[[");
         setPlayState(false);
         await recognition.start();
         imgRef.current.src = "/avatar2.gif";
