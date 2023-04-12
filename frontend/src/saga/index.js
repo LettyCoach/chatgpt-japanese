@@ -26,7 +26,7 @@ export let callAPI = async ({ url, method, data }) => {
     model: "gpt-3.5-turbo",
     // messages: [{ role: "user", content: data.message }],
     messages: data.message,
-    max_tokens: 128,
+    max_tokens: 64,
   });
 
   let rlt = response.data.choices[0].message.content;

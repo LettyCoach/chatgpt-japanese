@@ -21,7 +21,11 @@ const systemMessage = [
   // },
   {
     role: "assistant",
-    content: "あなたは日本語会話友達です、８歳レベルの単語を使って80字以内で会話を続けて下さい。",
+    // content: "あなたは日本語会話友達です、８歳レベルの単語を使って80字以内で会話を続けて下さい。",
+    // content:
+    //   "あなたは日本語会話友達です、子供が理解出来るレベルの単語だけを使って短い会話を続けて下さい。",
+    content:
+      "あなたは日本語会話友達です、子供が理解できるレベルの単語だけを使って短い会話を速い速度で続けて下さい。",
   },
 ];
 
@@ -139,7 +143,7 @@ const ChatForm = () => {
       return;
     }
 
-    console('processChat')
+    // console.log('processChat')
     setTimeout(() => {
       recognition.stop();
     }, 0);
@@ -156,6 +160,7 @@ const ChatForm = () => {
       return { role: role, content: e.text };
     });
 
+    // messageList = [...systemMessage, ...messageList, { role: "user", content: text }];
     messageList = [...systemMessage, ...messageList, { role: "user", content: text }];
 
     const response = fetchMessage(messageList);
