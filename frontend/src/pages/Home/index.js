@@ -29,11 +29,20 @@ const CGTLayout = () => (
         </Space>
       </Header>
       <Content style={styles.contentStyle}>
-        <Row style={{ flexFlow: "wrap-reverse" }}>
+        <Row style={{ flexFlow: "wrap" }}>
           <Col xs={24} sm={10} md={10} lg={8} xl={8} xxl={6}>
             <ChatForm />
           </Col>
-          <Col xs={24} sm={14} md={14} lg={16} xl={16} xxl={15} style={{ overflowY: 'scroll', height : ' calc(100vh - 64px) '}}>
+          <Col
+            className="chatView"
+            xs={24}
+            sm={14}
+            md={14}
+            lg={16}
+            xl={16}
+            xxl={15}
+            style={{ overflowY: "scroll" }}
+          >
             <ChatView />
           </Col>
         </Row>

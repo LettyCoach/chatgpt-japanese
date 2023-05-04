@@ -1,3 +1,21 @@
 body {
   margin: 0;
 }
+
+.avatar {
+  width: 90%;
+}
+
+.chatView {
+  height: calc(100vh - 64px)
+}
+
+@media(max-width : 580px) {
+  .avatar {
+    max-width: 60%;
+  }
+
+  .chatView {
+    height: 300px !important;
+  }
+}

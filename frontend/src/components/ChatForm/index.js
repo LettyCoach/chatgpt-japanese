@@ -3,8 +3,8 @@ import { Button, Form, Input, Row, Col, Select, Image } from "antd";
 import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMessage } from "../../actions/chatActions";
-import Axios from "axios";
 import styles from "./style";
+import prompts from "../../utils/prompts";
 
 const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
 
@@ -12,22 +12,6 @@ const recognition = new SpeechRecognition(); // prefix 必要 SpeechRecognition
 recognition.lang = "ja-JP";
 recognition.continuous = true;
 recognition.interimResults = false;
-
-const systemMessage = [
-  // {
-  //   role: "system",
-  //   content:
-  //     "Explain things like you're talking to a software professional with 2 years of experience.",
-  // },
-  {
-    role: "assistant",
-    // content: "あなたは日本語会話友達です、８歳レベルの単語を使って80字以内で会話を続けて下さい。",
-    // content:
-    //   "あなたは日本語会話友達です、子供が理解出来るレベルの単語だけを使って短い会話を続けて下さい。",
-    content:
-      "あなたは日本語会話友達です、子供が理解できるレベルの単語だけを使って短い会話を速い速度で続けて下さい。",
-  },
-];
 
 const ChatForm = () => {
   const [chatForm] = Form.useForm();
@@ -38,6 +22,7 @@ const ChatForm = () => {
   const { loading, messages } = useSelector((state) => state.chat);
   let [playState, setPlayState] = useState(true);
   let [startState, setStartState] = useState(false);
+  const [themeNumber, setThemeNumber] = useState(1);
   const [speed, setSpeed] = useState("1");
   const [user, setUser] = useState("A");
   const [japaneseVoice, setJapaneseVoice] = useState(null);
@@ -152,7 +137,7 @@ const ChatForm = () => {
 
     let messageList = messages.map((e) => {
       let role = "";
-      if (e.sender === "a") {
+      if (e.type === "a") {
         role = "assistant";
       } else {
         role = "user";
@@ -160,8 +145,9 @@ const ChatForm = () => {
       return { role: role, content: e.text };
     });
 
-    // messageList = [...systemMessage, ...messageList, { role: "user", content: text }];
-    messageList = [...systemMessage, ...messageList, { role: "user", content: text }];
+    const prompt = prompts[themeNumber];
+
+    messageList = [...prompt.value, ...messageList, { role: "user", content: text }];
 
     const response = fetchMessage(messageList);
 
@@ -182,7 +168,6 @@ const ChatForm = () => {
       utterance.rate = speed; // controls the speed, 1 is normal speed
       utterance.pitch = 1; // controls the pitch, 1 is normal pitch
       utterance.addEventListener("end", async () => {
-        // console.log("[[[[[[[[[[[[[[[[[");
         setPlayState(false);
         await recognition.start();
         imgRef.current.src = "/avatar2.gif";
@@ -223,6 +208,11 @@ const ChatForm = () => {
     imgRef.current.src = "/avatar2.gif";
   };
 
+  const handleThemeChange = (value) => {
+    console.log("1111", value);
+    setThemeNumber(value);
+  };
+
   const handleSpeedChange = (value) => {
     //console.log(value);
     setSpeed(value);
@@ -246,15 +236,40 @@ const ChatForm = () => {
   return (
     <>
       <audio ref={audioRef} onEnded={onEndedProcess} />
-      <Row
-        style={{ display: "flex", padding: "12px", alignItems: "center", justifyContent: "center" }}
-      >
-        <img
-          width={"90%"}
-          // height={'90%'}
-          ref={imgRef}
-          src="/avatar2.gif"
-        />
+      <Row>
+        <Col
+          style={{
+            display: "flex",
+            padding: "12px",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            className="avatar"
+            // width={"90%"}
+            // height={'90%'}
+            ref={imgRef}
+            src="/avatar2.gif"
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={2}></Col>
+        <Col span={20}>
+          <Select
+            defaultValue={themeNumber}
+            style={{ width: "100%" }}
+            onChange={handleThemeChange}
+            options={prompts.map((e, i) => {
+              return {
+                value: i,
+                label: e.label,
+              };
+            })}
+          />
+        </Col>
+        <Col span={2}></Col>
       </Row>
       <Row style={{ padding: 8 }}>
         <Col span={2}></Col>
